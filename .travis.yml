@@ -15,7 +15,7 @@ after_success:
   - docker build -t abhatiaco/multi-nginx ./nginx
   - docker build -t abhatiaco/multi-server ./server
   - docker build -t abhatiaco/multi-worker ./worker
-  # Log in to the docker CLI $DOCKER_PASSWORD, $DOCKER_ID are set in travis-ci.org in settings
+  # Log in to the docker CLI $DOCKER_PASSWORD, $DOCKER_ID are set in travis-ci.org in settings!!!
   
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   # Take those images and push them to docker hub!!
