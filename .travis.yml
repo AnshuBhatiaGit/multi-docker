@@ -1,0 +1,38 @@
+# To see integration with Travis make changes in travis.yml file and do git add . git commit -m "test" git push origin main
+
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t abhatiaco/react-test -f ./client/Dockerfile.dev ./client 
+
+script: 
+  - docker run abhatiaco/react-test npm test -- --coverage
+
+after_success: 
+  - docker build -t abhatiaco/multi-client ./client
+  - docker build -t abhatiaco/multi-nginx ./nginx
+  - docker build -t abhatiaco/multi-server ./server
+  - docker build -t abhatiaco/multi-worker ./worker
+  # Log in to the docker CLI $DOCKER_PASSWORD, $DOCKER_ID are set in travis-ci.org in settings
+  
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub!!
+  - docker push abhatiaco/multi-client
+  - docker push abhatiaco/multi-nginx
+  - docker push abhatiaco/multi-server
+  - docker push abhatiaco/multi-worker
+
+#deploy:
+ # provider: elasticbeanstalk
+ # region: us-east-1
+ # app: multi-docker
+ # env: MultiDocker-env
+ # bucket_name: elasticbeanstalk-us-west-1-306476627547
+ # bucket_path: docker-multi
+ # on:
+ #   branch: master
+ # access_key_id: $AWS_ACCESS_KEY
+ # secret_access_key:
+ #   secure: $AWS_SECRET_KEY
